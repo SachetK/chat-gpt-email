@@ -11,6 +11,8 @@ import { initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import OpenAi from "openai";
+import { env } from "~/env";
 
 /**
  * 1. CONTEXT
@@ -33,7 +35,13 @@ type CreateContextOptions = Record<string, never>;
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
-  return {};
+  return {
+    api: new OpenAi({
+      apiKey: env.OPEN_AI_API_KEY,
+      timeout: 5000,
+      maxRetries: 3,
+    })
+  };
 };
 
 /**
